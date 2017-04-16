@@ -32,8 +32,13 @@ export default class UserInterface {
     static attachTabListeners() {
         $('.js-tab-link').on('click', (e) => {
             e.preventDefault();
-            UserInterface.toggleIsActiveClass(e.target.parentNode);
-            console.log('Clicked on ', e.target)
+            // Remove all isActive classes, hide all tabbed content
+            $('.js-tab-link').removeClass('is-active');
+            $('.tabbed-item').hide();
+            // Add active class to the one clicked
+            $(e.target.parentNode).addClass('is-active');
+            $('.' + $(e.target.parentNode).attr('data-tab-target')).show();
+
         });
     }
 

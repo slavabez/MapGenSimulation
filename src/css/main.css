@@ -82,7 +82,7 @@ p.error {
     color: #00d1b2;
 }
 
-button.js-generate-map {
+.tabbed-item button {
     width: 100%;
 }
 

@@ -84,5 +84,24 @@ export default class CanvasMap {
 
     }
 
+    addColony(){
+
+    }
+
+    findSuitableColonySpot(){
+        // Take a random spot, check requirements, repeat until a spot is found
+        let randomTile = this.getRandomTile();
+
+        console.log(randomTile);
+
+
+    }
+
+    getRandomTile(){
+        const randX = Math.floor(Math.random() * this.width);
+        const randY = Math.floor(Math.random() * this.height);
+
+        return this.tiles[randY][randX];
+    }
 
 }
