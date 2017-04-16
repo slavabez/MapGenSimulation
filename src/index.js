@@ -1,16 +1,20 @@
-/**
- * Created by slava on 15/04/17.
- */
-// Importing te main page
+
+// Importing the main page
 import './index.html';
+import './css/main.css';
 
-import moment from 'moment';
+// import Bulma css
+import 'bulma/css/bulma.css';
 
-let Noise = require('noisejs').Noise;
+import Logger from './modules/Logger';
+import UI from './modules/UserInterface';
+
+
+Logger.logGood('ha');
+Logger.logError('Sample error');
+
+// Start all UI related listeners
+UI.attachAllUIListeners();
 
 
 
-
-let n = new Noise(123);
-
-console.log(n);
