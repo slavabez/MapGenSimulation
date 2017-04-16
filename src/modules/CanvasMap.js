@@ -77,9 +77,7 @@ export default class CanvasMap {
 
                 const altitude = (value + 1) * 3500 - 2000;
 
-                const tile = new Tile(w, h, Tile.getTypeByAltitude(altitude), altitude);
-
-                this.tiles[h][w] = tile;
+                this.tiles[h][w] = new Tile(w, h, Tile.getTypeByAltitude(altitude), altitude);
             }
         }
 

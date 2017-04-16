@@ -13,7 +13,6 @@ export default class UserInterface {
         UserInterface.attachTabListeners();
         UserInterface.attachSliderListeners();
         UserInterface.addGenerateButtonListener();
-        UserInterface.handleMapZoom();
     }
 
     static attachLogToggleButton() {
@@ -88,6 +87,8 @@ export default class UserInterface {
             map.renderOnCanvas();
 
 
+            UserInterface.handleMapZoom(map);
+
         });
     }
 
@@ -95,7 +96,7 @@ export default class UserInterface {
         $('.js-generate-map').removeClass('is-loading');
     }
 
-    static handleMapZoom() {
+    static handleMapZoom(map) {
         // Handle zooming area
         let zoomContext = document.getElementById('zoom_map').getContext('2d');
 
@@ -113,19 +114,47 @@ export default class UserInterface {
 
             zoomContext.drawImage(
                 canvas,
-                Math.abs(x - 10),
-                Math.abs(y - 10),
-                20, 20,
+                Math.abs(x-18),
+                Math.abs(y-18),
+                50, 50,
                 0, 0,
-                500, 500
+                400, 400
             );
 
+            zoomContext.fillStyle = 'rgb(0,255,0)';
+            zoomContext.fillRect(144,144,8,8);
+
+            // Make pixel looked at green
+
+            //let pixel = zoomContext.getImageData(x,y,1,1);
+            //let pixelData = pixel.data;
+
+
         };
-        const updateZoomInfo = function(map,x,y){
+
+        const updateZoomInfo = function(event){
+
+            let x = event.layerX;
+            let y = event.layerY;
+
+            $('.js-clicked-x').html(x);
+            $('.js-clicked-y').html(y);
+
+            console.log(map.tiles[y][x]);
+
+            const tile = map.tiles[y][x];
+
+            // Find map stuff
+            let type = tile.type.name;
+            let altitude = tile.altitude;
+
+            $('.js-clicked-type').html(type);
+            $('.js-clicked-altitude').html(altitude);
 
         };
 
         canvas.addEventListener('mousemove', zoom);
+        canvas.addEventListener('click', updateZoomInfo);
     }
 
 }

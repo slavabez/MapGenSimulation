@@ -47,9 +47,11 @@ p.error {
 }
 
 #main_map {
-    border: 4px solid black;
+    /*border: 4px solid black;
     border-radius: 0.25rem;
-    margin: 1rem 0;
+    margin: 1rem 0;*/
+    margin: 0;
+    padding: 0;
 
 }
 
@@ -195,4 +197,16 @@ input[type=range]::-ms-fill-upper {
 }
 input[type=range]:focus::-ms-fill-upper {
     background: #00d1b2;
+}
+
+.zoom-map-container {
+    justify-content: center;
+}
+
+.zoom-map-container canvas {
+    display: flex;
+}
+
+.tile-info-container {
+    flex-direction: column;
 }
