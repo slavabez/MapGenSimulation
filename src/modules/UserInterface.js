@@ -121,7 +121,7 @@ export default class UserInterface {
                 400, 400
             );
 
-            zoomContext.fillStyle = 'rgb(0,255,0)';
+            zoomContext.fillStyle = 'rgb(195,0,0)';
             zoomContext.fillRect(144,144,8,8);
 
             // Make pixel looked at green
@@ -140,13 +140,11 @@ export default class UserInterface {
             $('.js-clicked-x').html(x);
             $('.js-clicked-y').html(y);
 
-            console.log(map.tiles[y][x]);
-
             const tile = map.tiles[y][x];
 
             // Find map stuff
             let type = tile.type.name;
-            let altitude = tile.altitude;
+            let altitude = Math.floor(tile.altitude);
 
             $('.js-clicked-type').html(type);
             $('.js-clicked-altitude').html(altitude);
