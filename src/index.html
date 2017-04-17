@@ -68,6 +68,9 @@
 
 
                     <button class="button is-primary js-populate-map">Populate</button>
+
+                    <button class="button is-primary js-render-full">Render Full Map</button>
+
                 </div>
 
 
@@ -93,6 +96,7 @@
 
             <div class="tile is-ancestor" style="margin-top: 1rem;">
                 <div class="tile zoom-map-container">
+                    <div class="current-nav-info">Looking at: X: <span class="cur-x">0</span> Y: <span class="cur-y">0</span></div>
                     <canvas id="zoom_map" width="300px" height="300px">
 
                     </canvas>
@@ -120,15 +124,15 @@
                             <td>Altitude</td>
                             <td><span class="js-clicked-altitude">-2000</span>m</td>
                         </tr>
+                        <tr>
+                            <td>Passable?</td>
+                            <td><span class="js-clicked-passable"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Settlement?</td>
+                            <td><span class="js-clicked-settlement"></span></td>
+                        </tr>
                         <!--<tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
                             <td></td>
                             <td></td>
                         </tr>-->

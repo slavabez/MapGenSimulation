@@ -8,6 +8,9 @@ import TileTypes from './TileTypes';
 import Generator from './Generator';
 import CanvasHelper from "./CanvasHelper";
 import MathsHelper from "./MathsHelper";
+import Logger from "./Logger";
+import Colony from "./Colony";
+
 
 export default class CanvasMap {
 
@@ -22,6 +25,7 @@ export default class CanvasMap {
         const canvasDiv = document.getElementById(canvasId);
         const width = canvasDiv.width;
         const height = canvasDiv.height;
+        this.colonies = [];
 
         if (Number.isInteger(width)) {
             this.width = width;
@@ -88,11 +92,47 @@ export default class CanvasMap {
 
     }
 
-    findSuitableColonySpot(){
+    addRandomColony(){
         // Take a random spot, check requirements, repeat until a spot is found
-        let randomTile = this.getRandomTile();
+        let randomTile = this.getRandomPassableTile();
+        const x = randomTile.xCor;
+        const y = randomTile.yCor;
+        randomTile.settlement = true;
 
-        console.log(randomTile);
+        let newColony = new Colony(x,y);
+        randomTile.colony = newColony;
+        this.colonies.push(newColony);
+
+        CanvasHelper.drawMapPart(this, x-5, y-5, 10);
+
+        Logger.logGood(`Settlement placed on X: ${x}, Y: ${y}`);
+
+        console.log(randomTile,this.colonies);
+
+    }
+
+    addLargeRandomSettlement(size = 9){
+        let randomTile = this.getRandomPassableTile();
+
+        const x = randomTile.xCor;
+        const y = randomTile.yCor;
+
+        // Find the middle
+        const middle = Math.floor(size/2) + 1;
+
+        const startX = x - Math.floor(size/2);
+        const startY = y - Math.floor(size/2);
+
+        for (let iy = 0; iy < size; iy ++){
+            for (let ix = 0; ix < size; ix ++){
+                let tile = this.tiles[startY + iy][startX + ix];
+                if (tile.type.passable){
+                    tile.settlement = true;
+                }
+            }
+        }
+
+        CanvasHelper.drawMapPart(this, startX -5, startY - 5, 20);
 
 
     }
@@ -102,6 +142,20 @@ export default class CanvasMap {
         const randY = Math.floor(Math.random() * this.height);
 
         return this.tiles[randY][randX];
+    }
+
+    getRandomPassableTile(){
+        let tile = this.getRandomTile();
+        while(!tile.type.passable){
+            tile = this.getRandomTile();
+        }
+        return tile;
+    }
+
+    updateSinglePixel(x,y){
+
+        // Draw a Rect using the colour needed on the pixel needed
+
     }
 
 }

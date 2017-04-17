@@ -14,7 +14,10 @@ Logger.logGood('ha');
 Logger.logError('Sample error');
 
 // Start all UI related listeners
-UI.attachAllUIListeners();
+
+let ui = new UI;
+
+ui.attachAllUIListeners();
 
 
 

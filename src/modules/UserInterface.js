@@ -4,15 +4,18 @@
 
 import $ from 'jquery';
 import CanvasMap from './CanvasMap';
+import Logger from "./Logger";
 
 export default class UserInterface {
 
 
-    static attachAllUIListeners() {
+    attachAllUIListeners() {
         UserInterface.attachLogToggleButton();
         UserInterface.attachTabListeners();
         UserInterface.attachSliderListeners();
-        UserInterface.addGenerateButtonListener();
+        this.addGenerateButtonListener();
+        this.handlePopulateButtonClick();
+        this.handleButtonRenderFull();
     }
 
     static attachLogToggleButton() {
@@ -70,7 +73,9 @@ export default class UserInterface {
         });
     }
 
-    static addGenerateButtonListener() {
+    addGenerateButtonListener() {
+        let UI = this;
+
         $('.js-generate-map').on('click', (e) => {
             $('.js-generate-map').addClass('is-loading');
 
@@ -90,9 +95,10 @@ export default class UserInterface {
             let map = new CanvasMap(canvasId);
             map.generatePerlinBased(seed, scale, octaves, persistence, lacunarity);
             map.renderOnCanvas();
-
-
             UserInterface.handleMapZoom(map);
+
+            // Save map to the object
+            UI.currentMap = map;
 
         });
     }
@@ -129,6 +135,9 @@ export default class UserInterface {
             zoomContext.fillStyle = 'rgb(195,0,0)';
             zoomContext.fillRect(144,144,8,8);
 
+            $('.cur-x').html(x);
+            $('.cur-y').html(y);
+
             // Make pixel looked at green
 
             //let pixel = zoomContext.getImageData(x,y,1,1);
@@ -150,9 +159,13 @@ export default class UserInterface {
             // Find map stuff
             let type = tile.type.name;
             let altitude = Math.floor(tile.altitude);
+            let passable = tile.type.passable;
+            let settlement = tile.settlement;
 
             $('.js-clicked-type').html(type);
             $('.js-clicked-altitude').html(altitude);
+            $('.js-clicked-passable').html(passable.toString());
+            $('.js-clicked-settlement').html(settlement.toString());
 
         };
 
@@ -160,4 +173,30 @@ export default class UserInterface {
         canvas.addEventListener('click', updateZoomInfo);
     }
 
+    handlePopulateButtonClick(){
+
+        // Bind the scope
+        let UI = this;
+
+        $('.js-populate-map').on('click', () => {
+            if (UI.currentMap){
+                UI.currentMap.addRandomColony();
+            } else {
+                console.log('No map has been generated');
+            }
+        });
+
+    }
+
+    handleButtonRenderFull(){
+        let UI = this;
+
+        $('.js-render-full').on('click', () => {
+            if (UI.currentMap){
+                UI.currentMap.renderOnCanvas();
+            } else {
+                Logger.logError('No map present');
+            }
+        });
+    }
 }

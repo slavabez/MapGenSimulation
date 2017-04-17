@@ -13,7 +13,9 @@ export default class Tile {
         this.type = type;
         this.altitude = altitude;
         this.settlement = false;
+        this.colony = null;
     }
+
 
     // TODO: There's got to be a better way of doing this
     static getTypeByAltitude(altitude) {

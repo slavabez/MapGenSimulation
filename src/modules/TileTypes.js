@@ -10,7 +10,8 @@ export default  {
         g: '75',
         b: '127',
         maxAltitude: -1500,
-        name: 'Deep Water'
+        name: 'Deep Water',
+        passable: false
     },
     WATER: {
         hex: '#436fc7',
@@ -19,7 +20,8 @@ export default  {
         g: '111',
         b: '199',
         maxAltitude: -700,
-        name: 'Water'
+        name: 'Water',
+        passable: false
     },
     SHALLOW_WATER: {
         hex: '#4484DE',
@@ -28,7 +30,8 @@ export default  {
         g: '132',
         b: '222',
         maxAltitude: 0,
-        name: 'Shallow Water'
+        name: 'Shallow Water',
+        passable: false
     },
     SAND: {
         hex: '#CDB883',
@@ -37,7 +40,8 @@ export default  {
         g: '184',
         b: '131',
         maxAltitude: 200,
-        name: 'Sand'
+        name: 'Sand',
+        passable: true
     },
     GRASS: {
         hex: '#4F6B38',
@@ -46,7 +50,8 @@ export default  {
         g: '107',
         b: '56',
         maxAltitude: 1000,
-        name: 'Grass'
+        name: 'Grass',
+        passable: true
     },
     FOREST: {
         hex: '#3F5435',
@@ -55,7 +60,8 @@ export default  {
         g: '84',
         b: '53',
         maxAltitude: 2500,
-        name: 'Foresh / Plains'
+        name: 'Foresh / Plains',
+        passable: true
     },
     MOUNTAIN: {
         hex: '#7E7855',
@@ -64,7 +70,8 @@ export default  {
         g: '120',
         b: '85',
         maxAltitude: 4000,
-        name: 'Mountain'
+        name: 'Mountain',
+        passable: true
     },
     SNOW: {
         hex: '#F1F1ED',
@@ -73,7 +80,8 @@ export default  {
         g: '241',
         b: '237',
         maxAltitude: 5000,
-        name: 'Snow'
+        name: 'Snow',
+        passable: false
     }
 
 }
