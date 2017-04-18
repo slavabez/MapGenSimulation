@@ -4,7 +4,7 @@
 
 
 import Tile from './Tile';
-import TileTypes from './TileTypes';
+import TileTypes from './TileTypeEnum';
 import Generator from './Generator';
 import CanvasHelper from "./CanvasHelper";
 import MathsHelper from "./MathsHelper";
@@ -13,31 +13,23 @@ import Colony from "./Colony";
 
 
 export default class CanvasMap {
-
+    colonies: Array<Colony>;
+    width: number;
+    height: number;
+    canvasId: string;
+    tiles: Array<Array<Tile>>;
 
     /**
      * Creates a new map with given dimensions and fills it with ocean cells
      * @param canvasId
      */
-    constructor(canvasId) {
+    constructor(canvasId: string) {
 
         // Get width and height programmatically from the canvas
         const canvasDiv = document.getElementById(canvasId);
-        const width = canvasDiv.width;
-        const height = canvasDiv.height;
+        const width = canvasDiv.clientWidth;
+        const height = canvasDiv.clientHeight;
         this.colonies = [];
-
-        if (Number.isInteger(width)) {
-            this.width = width;
-        } else {
-            throw new Error('CanvasMap width has to be an integer');
-        }
-
-        if (Number.isInteger(height)) {
-            this.height = height;
-        } else {
-            throw new Error('CanvasMap height has to be an integer');
-        }
 
         this.canvasId = canvasId;
 
@@ -59,10 +51,10 @@ export default class CanvasMap {
         CanvasHelper.drawMap(this, this.canvasId);
     }
 
-    generatePerlinBased(seed, scale, octaves, persistence, lacunarity, useFalloffMap = true) {
+    generatePerlinBased(seed: number, scale: number, octaves: number, persistence: number, lacunarity: number, useFalloffMap: boolean = true) {
 
         const perlinMatrix = Generator.createPerlinNoiseMatrix(this.width, this.height, seed, scale, octaves, persistence, lacunarity);
-        let falloffMatrix = [];
+        let falloffMatrix: Array<Array<number>> = [];
         if (useFalloffMap){
             falloffMatrix = Generator.createFalloffMap(this.width, this.height);
         }
@@ -71,7 +63,7 @@ export default class CanvasMap {
             this.tiles[h] = [];
             for (let w = 0; w < this.width; w++) {
 
-                let value;
+                let value: number;
                 if (useFalloffMap){
                     let subtracted = perlinMatrix[h][w] - falloffMatrix[h][w];
                     value = MathsHelper.clampNumber(subtracted);
@@ -97,7 +89,7 @@ export default class CanvasMap {
         let randomTile = this.getRandomPassableTile();
         const x = randomTile.xCor;
         const y = randomTile.yCor;
-        randomTile.settlement = true;
+        randomTile.hasSettlement = true;
 
         let newColony = new Colony(x,y);
         randomTile.colony = newColony;
@@ -127,7 +119,7 @@ export default class CanvasMap {
             for (let ix = 0; ix < size; ix ++){
                 let tile = this.tiles[startY + iy][startX + ix];
                 if (tile.type.passable){
-                    tile.settlement = true;
+                    tile.hasSettlement = true;
                 }
             }
         }

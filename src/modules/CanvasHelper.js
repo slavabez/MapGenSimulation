@@ -25,9 +25,9 @@ export default class CanvasHelper {
             for (let w = 0; w < map.width; w++) {
 
                 const tile = map.tiles[h][w];
-                // If settlement - get that settlement colour
+                // If hasSettlement - get that hasSettlement colour
                 let rgb;
-                if (tile.settlement){
+                if (tile.hasSettlement){
                     rgb = tile.colony.colour;
                 } else {
                     rgb = tile.type;
@@ -62,9 +62,9 @@ export default class CanvasHelper {
             for (let x = 0; x < size; x++) {
 
                 const tile = map.tiles[startY + y][startX + x];
-                // If settlement - get that settlement colour
+                // If hasSettlement - get that hasSettlement colour
                 let rgb;
-                if (tile.settlement){
+                if (tile.hasSettlement){
                     rgb = tile.colony.colour;
                 } else {
                     rgb = tile.type;

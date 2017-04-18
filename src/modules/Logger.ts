@@ -2,11 +2,11 @@
  * Created by slava on 16/04/17.
  */
 
-import moment from 'moment';
+import * as moment from 'moment';
 
 export default class Logger {
 
-    static log(text, prefix, level){
+    static log(text:string, prefix?:string, level?:string){
         let logWindow = document.querySelector('.logWindow');
         if (!logWindow){
             throw new Error('Log Window div was not found');
@@ -35,15 +35,15 @@ export default class Logger {
         logWindow.scrollTop = logWindow.scrollHeight;
     }
 
-    static logWarning(text){
+    static logWarning(text:string){
         Logger.log(text, 'Warning:', 'warning');
     }
 
-    static logError(text){
+    static logError(text:string){
         Logger.log(text, 'Error:', 'error');
     }
 
-    static logGood(text){
+    static logGood(text:string){
         Logger.log(text, 'Log:', 'good');
     }
 }

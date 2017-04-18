@@ -160,12 +160,12 @@ export default class UserInterface {
             let type = tile.type.name;
             let altitude = Math.floor(tile.altitude);
             let passable = tile.type.passable;
-            let settlement = tile.settlement;
+            let settlement = tile.hasSettlement;
 
             $('.js-clicked-type').html(type);
             $('.js-clicked-altitude').html(altitude);
             $('.js-clicked-passable').html(passable.toString());
-            $('.js-clicked-settlement').html(settlement.toString());
+            $('.js-clicked-hasSettlement').html(settlement.toString());
 
         };
 
