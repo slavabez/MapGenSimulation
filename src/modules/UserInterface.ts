@@ -2,11 +2,12 @@
  * Created by slava on 16/04/17.
  */
 
-import $ from 'jquery';
+import * as $ from 'jquery';
 import CanvasMap from './CanvasMap';
 import Logger from "./Logger";
 
 export default class UserInterface {
+    currentMap: CanvasMap;
 
 
     attachAllUIListeners() {
@@ -24,7 +25,7 @@ export default class UserInterface {
     }
 
     static toggleLogButton() {
-        let panelDisplay = document.querySelector('.logWindow');
+        let panelDisplay = <HTMLElement>document.querySelector('.logWindow');
         if (!panelDisplay.style.display || panelDisplay.style.display === 'block') {
             panelDisplay.style.display = 'none';
         } else {
@@ -33,19 +34,21 @@ export default class UserInterface {
     }
 
     static attachTabListeners() {
-        $('.js-tab-link').on('click', (e) => {
+        $('.js-tab-link').on('click', (e: Event) => {
             e.preventDefault();
             // Remove all isActive classes, hide all tabbed content
             $('.js-tab-link').removeClass('is-active');
             $('.tabbed-item').hide();
             // Add active class to the one clicked
-            $(e.target.parentNode).addClass('is-active');
-            $('.' + $(e.target.parentNode).attr('data-tab-target')).show();
+            let target:any = e.target;
+
+            $(target.parentNode).addClass('is-active');
+            $('.' + $(target.parentNode).attr('data-tab-target')).show();
 
         });
     }
 
-    static toggleIsActiveClass(item) {
+    static toggleIsActiveClass(item: any) {
         let jItem = $(item);
         if (jItem.hasClass('is-active')) {
             jItem.removeClass('is-active');
@@ -57,19 +60,23 @@ export default class UserInterface {
     static attachSliderListeners() {
         // Scale slider
         $('#map_scale').on('input', (e) => {
-            $('.js-current-scale').html(e.target.value);
+            let target: any = e.target;
+            $('.js-current-scale').html(target.value);
         });
         // Octaves
         $('#map_octaves').on('input', (e) => {
-            $('.js-current-octaves').html(e.target.value);
+            let target: any = e.target;
+            $('.js-current-octaves').html(target.value);
         });
         // Lacunarity
         $('#map_lacunarity').on('input', (e) => {
-            $('.js-current-lacunarity').html(e.target.value);
+            let target: any = e.target;
+            $('.js-current-lacunarity').html(target.value);
         });
         // Persistance
         $('#map_persistence').on('input', (e) => {
-            $('.js-current-persistence').html(e.target.value);
+            let target: any = e.target;
+            $('.js-current-persistence').html(target.value);
         });
     }
 
@@ -107,9 +114,10 @@ export default class UserInterface {
         $('.js-generate-map').removeClass('is-loading');
     }
 
-    static handleMapZoom(map) {
+    static handleMapZoom(map: CanvasMap) {
         // Handle zooming area
-        let zoomContext = document.getElementById('zoom_map').getContext('2d');
+        const mapDiv: any = document.getElementById('zoom_map');
+        let zoomContext = mapDiv.getContext('2d');
 
         const canvas = document.getElementById('main_map');
 
@@ -117,9 +125,8 @@ export default class UserInterface {
         zoomContext.imageSmoothingEnabled = false;
         zoomContext.mozImageSmoothingEnabled = false;
         zoomContext.webkitImageSmoothingEnabled = false;
-        zoomContext.msImageSmoothingEnabled = false;
 
-        const zoom = function (event) {
+        const zoom = function (event: any) {
             let x = event.layerX;
             let y = event.layerY;
 
@@ -146,7 +153,7 @@ export default class UserInterface {
 
         };
 
-        const updateZoomInfo = function(event){
+        const updateZoomInfo = function(event: any){
 
             let x = event.layerX;
             let y = event.layerY;
@@ -157,10 +164,10 @@ export default class UserInterface {
             const tile = map.tiles[y][x];
 
             // Find map stuff
-            let type = tile.type.name;
-            let altitude = Math.floor(tile.altitude);
-            let passable = tile.type.passable;
-            let settlement = tile.hasSettlement;
+            let type: any = tile.type.name;
+            let altitude: any = Math.floor(tile.altitude);
+            let passable: any = tile.type.passable;
+            let settlement: any = tile.hasSettlement;
 
             $('.js-clicked-type').html(type);
             $('.js-clicked-altitude').html(altitude);

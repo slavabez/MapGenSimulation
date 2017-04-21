@@ -1,4 +1,4 @@
-import {Map} from "typescript";
+
 import Tile from "./Tile";
 import {TileTypeEnum} from "./TileTypeEnum";
 /**
@@ -9,6 +9,7 @@ import {TileTypeEnum} from "./TileTypeEnum";
 
 export default class TileType {
 
+    id: number;
     hex: string;
     rgb: string;
     r: number;
@@ -18,29 +19,33 @@ export default class TileType {
     name: string;
     passable: boolean;
 
-    constructor(hex: string, rgb: string, r: number, g: number, b: number, maxAltitude: number, name: string, passable: boolean) {
-        this.hex = hex;
-        this.rgb = rgb;
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.maxAltitude = maxAltitude;
-        this.name = name;
-        this.passable = passable;
+    constructor(t: TileTypeObject) {
+        this.id = t.id;
+        this.hex = t.hex;
+        this.rgb = t.rgb;
+        this.r = t.r;
+        this.g = t.g;
+        this.b = t.b;
+        this.maxAltitude = t.maxAltitude;
+        this.name = t.name;
+        this.passable = t.passable;
 
     }
 
+    static getTypeById(id: TileTypeEnum){
+        return TileType.getAllTileTypesMap().get(id);
+    }
 
-    static getAllTileTypesMap(): Map<TileType> {
-        let allTypes: Map<TileType> = new Map();
+
+    static getAllTileTypesMap(): Map<number,TileType> {
+        let allTypes = new Map();
         let all = TileType.getAllTileTypesAsArray();
 
         all.forEach((item) => {
-            allTypes.set(item.id.toString(), item);
+            allTypes.set(item.id, item);
         });
 
         return allTypes;
-
     }
 
     static getAllTileTypesAsArray(): Array<TileTypeObject>{
@@ -136,9 +141,32 @@ export default class TileType {
         ];
     }
 
+    static getRandomTileType(){
+        let position = Math.floor(Math.random() * TileType.getAllTileTypesAsArray().length);
+        return TileType.getAllTileTypesAsArray()[position];
+    }
+
+
+    static getTileTypeByAltitude(altitude: number): TileType {
+        // Get the array of all objects, sort just in case
+        let arr: Array<TileType> = TileType.getAllTileTypesAsArray();
+        // Sort in ASC order
+        arr.sort((a: TileTypeObject, b: TileTypeObject) => {
+            return a.maxAltitude - b.maxAltitude;
+        });
+
+        for (let a of arr){
+            if (altitude < a.maxAltitude){
+                return new TileType(a);
+            }
+        }
+
+        return TileType.getTypeById(TileTypeEnum.DEEP_WATER);
+    }
+
 }
 
-interface TileTypeObject {
+export interface TileTypeObject {
     id: TileTypeEnum,
     hex: string;
     rgb: string;

@@ -3,27 +3,36 @@
  */
 
 import MathsHelper from './MathsHelper';
-
-const Noise = require('noisejs').Noise;
+import Noise from './Noise';
 
 
 export default class Generator {
 
     /**
-     * Creates a random noise matrix with values from -1 to 1
+     *
      * @param width
      * @param height
-     * @param seed - is fed to the Perlin generator
+     * @param seed
      * @param scale
      * @param octaves
      * @param persistence
      * @param lacunarity
-     * @returns {Array}
+     * @returns {Array<Array<number>>}
      */
-    static createPerlinNoiseMatrix(width, height, seed = 3175, scale, octaves, persistence, lacunarity){
-        let noise = new Noise(seed);
+    static createPerlinNoiseMatrix (
+        width: number,
+        height: number,
+        seed: number = 3175,
+        scale: number,
+        octaves: number,
+        persistence: number,
+        lacunarity: number
+    ): Array<Array<number>> {
 
-        let array = [];
+        let noise = new Noise(seed);
+        // let noise = new Noise(seed);
+
+        let array: Array<Array<number>> = [];
 
         let maxNoiseHeight = Number.MIN_VALUE;
         let minNoiseHeight = Number.MAX_VALUE;
@@ -31,7 +40,6 @@ export default class Generator {
         for (let h = 0; h < height; h++) {
             array[h] = [];
             for (let w = 0; w < width; w++) {
-
                 array[h][w] = 1;
 
                 let amplitude = 1;
@@ -39,7 +47,6 @@ export default class Generator {
                 let noiseHeight = 0;
 
                 for (let o = 0; o < octaves; o++) {
-
                     let sampleX = h / scale * frequency;
                     let sampleY = w / scale * frequency;
                     let perlinValue = noise.perlin2(sampleX, sampleY);
@@ -55,11 +62,7 @@ export default class Generator {
                     } else if (noiseHeight < minNoiseHeight) {
                         minNoiseHeight = noiseHeight;
                     }
-
                 }
-
-
-
             }
         }
 
@@ -70,9 +73,10 @@ export default class Generator {
      * Creates a falloff map for the map dimensions given. Uses the evaluateFalloff method from MathsHelper
      * @param width
      * @param height
+     * @returns {Array<Array<number>>}
      */
-    static createFalloffMap(width, height){
-        let falloffMap = [];
+    static createFalloffMap(width: number, height: number): Array<Array<number>> {
+        let falloffMap: Array<Array<number>> = [];
 
         for (let h = 0; h < height; h++) {
             falloffMap[h] = [];

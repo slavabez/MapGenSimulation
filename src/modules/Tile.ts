@@ -2,45 +2,49 @@
  * Created by slava on 16/04/17.
  */
 
-import TileTypes from './TileTypeEnum';
 import Colony from './Colony';
+import TileType from "./TileType";
+import {TileTypeEnum} from "./TileTypeEnum";
 
 export default class Tile {
     xCor: number;
     yCor: number;
-    type: Object;
+    type: TileType;
     altitude: number;
     hasSettlement: boolean;
     colony: Colony;
 
 
-    constructor(x: number, y: number, type: Object, altitude: number) {
-        this.xCor = x;
-        this.yCor = y;
-        this.type = type;
-        this.altitude = altitude;
-        this.hasSettlement = false;
-        this.colony = null;
+    constructor(c: TileConstructorObject) {
+        this.xCor = c.xCor;
+        this.yCor = c.yCor;
+        this.type = c.type;
+        this.altitude = c.altitude;
+        this.hasSettlement = c.hasSettlement;
+        this.colony = c.colony;
     }
 
+    static createEmptyTile(x: number, y: number){
+        let type = TileType.getTypeById(TileTypeEnum.DEEP_WATER);
 
-    // TODO: There's got to be a better way of doing this
-    static getTypeByAltitude(altitude: number): Object {
-        let type;
-        let found = false;
-        Object.keys(TileTypes).forEach( key => {
-            if (altitude <= TileTypes[key].maxAltitude && !found) {
-                type = TileTypes[key];
-                found = true;
-            }
+        return new Tile({
+            xCor: x,
+            yCor: y,
+            type: type,
+            altitude: -5000,
+            hasSettlement: false,
+            colony: Colony.getEmptyColony()
         });
-
-        if (type) {
-            return type;
-        } else {
-            return null;
-        }
     }
+
 }
 
 
+export interface TileConstructorObject {
+    xCor: number;
+    yCor: number;
+    type: TileType;
+    altitude: number;
+    hasSettlement: boolean;
+    colony: Colony;
+}

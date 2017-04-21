@@ -3,20 +3,24 @@
  */
 
 import UI from './UserInterface';
+import CanvasMap from "./CanvasMap";
 
 export default class CanvasHelper {
 
-    static getCanvasContext(canvasId){
-        return document.getElementById(canvasId).getContext('2d');
+    static getCanvasContext(canvasId: string) {
+
+        let canvas = <HTMLCanvasElement> document.getElementById(canvasId);
+        return canvas.getContext('2d');
     }
 
     /**
      * Convert the cells on the map to the array compatible with canvas. The array can be loaded straight into the canvas
      * @param map
      */
-    static convertMapToUint8ClampedArray(map){
+    static convertMapToUint8ClampedArray(map: CanvasMap) {
         const context = CanvasHelper.getCanvasContext(map.canvasId);
 
+        console.log(map);
         // Create an empty imageData array
         let imageData = context.createImageData(map.width, map.height);
 
@@ -27,7 +31,7 @@ export default class CanvasHelper {
                 const tile = map.tiles[h][w];
                 // If hasSettlement - get that hasSettlement colour
                 let rgb;
-                if (tile.hasSettlement){
+                if (tile.hasSettlement) {
                     rgb = tile.colony.colour;
                 } else {
                     rgb = tile.type;
@@ -52,7 +56,7 @@ export default class CanvasHelper {
         return imageData;
     }
 
-    static convertPartMapToUint8(map,startX,startY,size){
+    static convertPartMapToUint8(map: CanvasMap, startX: number, startY: number, size: number) {
         const context = CanvasHelper.getCanvasContext(map.canvasId);
         // Create empty imageData array with set dimensions
         let imageData = context.createImageData(size, size);
@@ -64,7 +68,7 @@ export default class CanvasHelper {
                 const tile = map.tiles[startY + y][startX + x];
                 // If hasSettlement - get that hasSettlement colour
                 let rgb;
-                if (tile.hasSettlement){
+                if (tile.hasSettlement) {
                     rgb = tile.colony.colour;
                 } else {
                     rgb = tile.type;
@@ -88,7 +92,7 @@ export default class CanvasHelper {
         return imageData;
     }
 
-    static drawMap(map) {
+    static drawMap(map: CanvasMap) {
 
         // Get Canvas context
         const context = CanvasHelper.getCanvasContext(map.canvasId);
@@ -99,55 +103,10 @@ export default class CanvasHelper {
         UI.stopGenerateButtonLoading();
     }
 
-    static drawMapPart(map,startX,startY,size){
-
+    static drawMapPart(map: CanvasMap, startX: number, startY: number, size: number) {
         const context = CanvasHelper.getCanvasContext(map.canvasId);
-
-        const partialMapImageData = CanvasHelper.convertPartMapToUint8(map,startX, startY, size);
-
+        const partialMapImageData = CanvasHelper.convertPartMapToUint8(map, startX, startY, size);
         context.putImageData(partialMapImageData, startX, startY);
-
     }
 
-    static getAllColonyColours(){
-        return [
-            {
-                name: 'red',
-                hex: '#ff0000',
-                rgb: '255,0,0',
-                r: 255,
-                g: 0,
-                b: 0
-            },
-            {
-                name: 'orange',
-                hex: '#ff7d04',
-                rgb: '255,125,4',
-                r: 255,
-                g: 125,
-                b: 4
-            },
-            {
-                name: 'blue',
-                hex: '#0e03ff',
-                rgb: '14,3,255',
-                r: 14,
-                g: 3,
-                b: 255
-            },
-            {
-                name: 'yellow',
-                hex: '#fffb05',
-                rgb: '255,255,5',
-                r: 255,
-                g: 255,
-                b: 5
-            }
-        ];
-    }
-
-    static getRandomColonyColour(){
-        let number = CanvasHelper.getAllColonyColours().length;
-        return CanvasHelper.getAllColonyColours()[Math.floor(Math.random()*number)];
-    }
 }

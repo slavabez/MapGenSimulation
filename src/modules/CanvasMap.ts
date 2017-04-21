@@ -3,13 +3,13 @@
  */
 
 
-import Tile from './Tile';
-import TileTypes from './TileTypeEnum';
+import Tile, {TileConstructorObject} from './Tile';
 import Generator from './Generator';
 import CanvasHelper from "./CanvasHelper";
 import MathsHelper from "./MathsHelper";
 import Logger from "./Logger";
 import Colony from "./Colony";
+import TileType from "./TileType";
 
 
 export default class CanvasMap {
@@ -26,9 +26,9 @@ export default class CanvasMap {
     constructor(canvasId: string) {
 
         // Get width and height programmatically from the canvas
-        const canvasDiv = document.getElementById(canvasId);
-        const width = canvasDiv.clientWidth;
-        const height = canvasDiv.clientHeight;
+        const canvasDiv: any = document.getElementById(canvasId);
+        this.width = canvasDiv.width;
+        this.height = canvasDiv.height;
         this.colonies = [];
 
         this.canvasId = canvasId;
@@ -40,15 +40,14 @@ export default class CanvasMap {
         for (let h = 0; h < this.height; h++) {
             this.tiles[h] = [];
             for (let w = 0; w < this.width; w++) {
-                this.tiles[h][w] = new Tile(w, h, TileTypes.DEEP_WATER, -5000);
+                this.tiles[h][w] = Tile.createEmptyTile(w,h);
             }
         }
 
     }
 
-
     renderOnCanvas() {
-        CanvasHelper.drawMap(this, this.canvasId);
+        CanvasHelper.drawMap(this);
     }
 
     generatePerlinBased(seed: number, scale: number, octaves: number, persistence: number, lacunarity: number, useFalloffMap: boolean = true) {
@@ -73,14 +72,20 @@ export default class CanvasMap {
 
                 const altitude = (value + 1) * 3500 - 2000;
 
-                this.tiles[h][w] = new Tile(w, h, Tile.getTypeByAltitude(altitude), altitude);
+                const tileType = TileType.getTileTypeByAltitude(altitude);
+                const cObj: TileConstructorObject = {
+                    xCor: w,
+                    yCor: h,
+                    hasSettlement: false,
+                    colony: Colony.getEmptyColony(),
+                    type: tileType,
+                    altitude: altitude
+                };
+
+                this.tiles[h][w] = new Tile(cObj);
             }
         }
 
-
-    }
-
-    addColony(){
 
     }
 
@@ -91,7 +96,7 @@ export default class CanvasMap {
         const y = randomTile.yCor;
         randomTile.hasSettlement = true;
 
-        let newColony = new Colony(x,y);
+        let newColony = Colony.createNewRandomColony(x, y);
         randomTile.colony = newColony;
         this.colonies.push(newColony);
 
@@ -125,8 +130,6 @@ export default class CanvasMap {
         }
 
         CanvasHelper.drawMapPart(this, startX -5, startY - 5, 20);
-
-
     }
 
     getRandomTile(){
@@ -142,12 +145,6 @@ export default class CanvasMap {
             tile = this.getRandomTile();
         }
         return tile;
-    }
-
-    updateSinglePixel(x,y){
-
-        // Draw a Rect using the colour needed on the pixel needed
-
     }
 
 }

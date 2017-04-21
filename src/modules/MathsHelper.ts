@@ -11,7 +11,7 @@ export default class MathsHelper {
      * @param min
      * @param max
      */
-    static clampNumber(num, min = -1, max = 1){
+    static clampNumber(num: number, min: number = -1, max: number = 1){
         return num <= min ? min : num >= max ? max : num;
     }
 
@@ -20,7 +20,7 @@ export default class MathsHelper {
      * @param value
      * @returns {number}
      */
-    static evaluateFalloff(value){
+    static evaluateFalloff(value: number){
         let a = 3;
         let b = 2.2;
 
