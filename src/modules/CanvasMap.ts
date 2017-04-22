@@ -98,7 +98,8 @@ export default class CanvasMap {
 
         randomTile.colony = Colony.createNewRandomColony(this, x, y);
 
-        CanvasHelper.drawMapPart(this, x-5, y-5, 10);
+        // Don't think I need this anymore
+        /*CanvasHelper.drawMapPart(this, x-5, y-5, 10);*/
 
         Logger.logGood(`Settlement placed on X: ${x}, Y: ${y}`);
 
@@ -137,7 +138,7 @@ export default class CanvasMap {
 
     getRandomPassableTile(){
         let tile = this.getRandomTile();
-        while(!tile.type.passable && tile.hasSettlement){
+        while(!tile.type.passable || tile.hasSettlement){
             tile = this.getRandomTile();
         }
         return tile;

@@ -15,7 +15,7 @@ Logger.logError('Sample error');
 
 // Start all UI related listeners
 
-let ui = new UI;
+let ui = new UI();
 
 ui.attachAllUIListeners();
 

@@ -6,12 +6,20 @@ import * as $ from 'jquery';
 import CanvasMap from './CanvasMap';
 import Logger from "./Logger";
 import GameLoop, {GameState} from "./GameLoop";
+import * as Mousetrap from 'mousetrap';
+import MathsHelper from "./MathsHelper";
 
 export default class UserInterface {
 
     currentMap: CanvasMap;
     gameLoop: GameLoop;
+    zoomedAt: any;
+    zoomedCanvasId: string;
 
+    constructor(){
+        this.zoomedAt = {};
+        this.zoomedCanvasId = 'zoom_map';
+    }
 
     attachAllUIListeners() {
         UserInterface.attachLogToggleButton();
@@ -20,6 +28,42 @@ export default class UserInterface {
         this.addGenerateButtonListener();
         this.handlePopulateButtonClick();
         this.handleButtonRenderFull();
+    }
+
+    attachKeyboardShortcuts(){
+        let UI = this;
+
+        // Left
+        Mousetrap.bind('left', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x - 1, UI.zoomedAt.y);
+        });
+        Mousetrap.bind('shift+left', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x - 10, UI.zoomedAt.y);
+        });
+
+        // Right
+        Mousetrap.bind('right', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x + 1, UI.zoomedAt.y);
+        });
+        Mousetrap.bind('shift+right', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x + 10, UI.zoomedAt.y);
+        });
+
+        // UP
+        Mousetrap.bind('up', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x, UI.zoomedAt.y - 1);
+        });
+        Mousetrap.bind('shift+up', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x, UI.zoomedAt.y - 10);
+        });
+
+        // DOWN
+        Mousetrap.bind('down', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x, UI.zoomedAt.y + 1);
+        });
+        Mousetrap.bind('shift+down', () => {
+            UI.setZoomedInCoordinates(UI.zoomedAt.x, UI.zoomedAt.y + 10);
+        });
     }
 
     attachLoopListeners(){
@@ -139,8 +183,8 @@ export default class UserInterface {
 
             // Gather input fields, pass to Generator
 
-            const conteinerId = 'main-map-container';
-            let canvasId = UserInterface.createCanvasDiv('.' + conteinerId, 'main-canvas');
+            const containerId = 'main-map-container';
+            let canvasId = UserInterface.createCanvasDiv('.' + containerId, 'main-canvas');
 
             // TODO: add fields to change canvas dimensions programmatically
 
@@ -153,12 +197,12 @@ export default class UserInterface {
             let map = new CanvasMap(canvasId);
             map.generatePerlinBased(seed, scale, octaves, persistence, lacunarity);
             map.renderOnCanvas();
-            UserInterface.handleMapZoom(map);
 
             // Save map to the object
             UI.currentMap = map;
-
+            UI.handleMapZoom();
             UI.attachLoopListeners();
+            UI.attachKeyboardShortcuts();
         });
     }
 
@@ -170,21 +214,70 @@ export default class UserInterface {
         $('.js-generate-map').addClass('is-loading');
     }
 
-    static handleMapZoom(map: CanvasMap) {
+    handleMapZoom() {
         // Handle zooming area
-        const mapDiv: any = document.getElementById('zoom_map');
-        let zoomContext = mapDiv.getContext('2d');
+        let UI = this;
+        let canvas = document.getElementById(this.currentMap.canvasId);
+        UI.setZoomedInCoordinates(Math.floor(this.currentMap.width) / 2,  Math.floor(this.currentMap.height / 2));
 
-        const canvas = document.getElementById(map.canvasId);
+        canvas.addEventListener('click', (event) => {
+            let x = event.layerX;
+            let y = event.layerY;
+            UI.setZoomedInCoordinates(x,y);
+            UI.startUpdatingZoomedArea();
+        });
+    }
+
+    updateZoomedInfo(){
+        let x = this.zoomedAt.x;
+        let y = this.zoomedAt.y;
+
+        $('.js-clicked-x').html(x);
+        $('.js-clicked-y').html(y);
+
+        const tile = this.currentMap.tiles[y][x];
+
+        if (tile) {
+            // Find map stuff
+            let type: string = tile.type.name;
+            let altitude: number = Math.floor(tile.altitude);
+            let passable: boolean = tile.type.passable;
+            let settlement: boolean = tile.hasSettlement;
+
+            $('.js-clicked-type').html(type);
+            $('.js-clicked-altitude').html(altitude.toString());
+            $('.js-clicked-passable').html(passable.toString());
+            $('.js-clicked-settlement').html(settlement.toString());
+        }
+
+
+    }
+
+    setZoomedInCoordinates(x: number, y: number){
+
+        this.zoomedAt.x = MathsHelper.clampNumber(x, 0, this.currentMap.width - 1);
+        this.zoomedAt.y = MathsHelper.clampNumber(y, 0, this.currentMap.height - 1);/*
+        console.log(`Max height: ${this.currentMap.height} and max width: ${this.currentMap.width}`);*/
+
+        this.updateZoomedInfo();
+    }
+
+    startUpdatingZoomedArea(){
+
+        let UI = this;
+        let zoomCanvas: any = document.getElementById(this.zoomedCanvasId);
+        const canvas: any = document.getElementById(this.currentMap.canvasId);
+        let zoomContext = zoomCanvas.getContext('2d');
 
         // Disable anti aliasing
         zoomContext.imageSmoothingEnabled = false;
         zoomContext.mozImageSmoothingEnabled = false;
         zoomContext.webkitImageSmoothingEnabled = false;
 
-        const zoom = function (event: any) {
-            let x = event.layerX;
-            let y = event.layerY;
+        // Update at 60fps
+        setInterval(() => {
+            let x = UI.zoomedAt.x;
+            let y = UI.zoomedAt.y;
 
             zoomContext.drawImage(
                 canvas,
@@ -200,40 +293,7 @@ export default class UserInterface {
 
             $('.cur-x').html(x);
             $('.cur-y').html(y);
-
-            // Make pixel looked at green
-
-            //let pixel = zoomContext.getImageData(x,y,1,1);
-            //let pixelData = pixel.data;
-
-
-        };
-
-        const updateZoomInfo = function(event: any){
-
-            let x = event.layerX;
-            let y = event.layerY;
-
-            $('.js-clicked-x').html(x);
-            $('.js-clicked-y').html(y);
-
-            const tile = map.tiles[y][x];
-
-            // Find map stuff
-            let type: string = tile.type.name;
-            let altitude: number = Math.floor(tile.altitude);
-            let passable: boolean = tile.type.passable;
-            let settlement: boolean = tile.hasSettlement;
-
-            $('.js-clicked-type').html(type);
-            $('.js-clicked-altitude').html(altitude.toString());
-            $('.js-clicked-passable').html(passable.toString());
-            $('.js-clicked-settlement').html(settlement.toString());
-
-        };
-
-        canvas.addEventListener('mousemove', zoom);
-        canvas.addEventListener('click', updateZoomInfo);
+        }, 1000/60);
     }
 
     handlePopulateButtonClick(){
