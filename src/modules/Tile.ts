@@ -12,7 +12,7 @@ export default class Tile {
     type: TileType;
     altitude: number;
     hasSettlement: boolean;
-    colony: Colony;
+    colony: Colony | null;
 
 
     constructor(c: TileConstructorObject) {
@@ -33,7 +33,7 @@ export default class Tile {
             type: type,
             altitude: -5000,
             hasSettlement: false,
-            colony: Colony.getEmptyColony()
+            colony: null
         });
     }
 

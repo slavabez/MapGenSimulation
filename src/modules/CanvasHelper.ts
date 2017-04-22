@@ -20,7 +20,6 @@ export default class CanvasHelper {
     static convertMapToUint8ClampedArray(map: CanvasMap) {
         const context = CanvasHelper.getCanvasContext(map.canvasId);
 
-        console.log(map);
         // Create an empty imageData array
         let imageData = context.createImageData(map.width, map.height);
 

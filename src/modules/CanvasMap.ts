@@ -27,12 +27,12 @@ export default class CanvasMap {
 
         // Get width and height programmatically from the canvas
         const canvasDiv: any = document.getElementById(canvasId);
+        console.log(canvasId);
         this.width = canvasDiv.width;
         this.height = canvasDiv.height;
         this.colonies = [];
 
         this.canvasId = canvasId;
-
 
         // Create ocean cells
         this.tiles = [];
@@ -48,12 +48,13 @@ export default class CanvasMap {
 
     renderOnCanvas() {
         CanvasHelper.drawMap(this);
+        console.log(this);
     }
 
     generatePerlinBased(seed: number, scale: number, octaves: number, persistence: number, lacunarity: number, useFalloffMap: boolean = true) {
 
         const perlinMatrix = Generator.createPerlinNoiseMatrix(this.width, this.height, seed, scale, octaves, persistence, lacunarity);
-        let falloffMatrix: Array<Array<number>> = [];
+        let falloffMatrix: Array< Array< number >> = [];
         if (useFalloffMap){
             falloffMatrix = Generator.createFalloffMap(this.width, this.height);
         }
@@ -77,7 +78,7 @@ export default class CanvasMap {
                     xCor: w,
                     yCor: h,
                     hasSettlement: false,
-                    colony: Colony.getEmptyColony(),
+                    colony: null,
                     type: tileType,
                     altitude: altitude
                 };
@@ -96,9 +97,7 @@ export default class CanvasMap {
         const y = randomTile.yCor;
         randomTile.hasSettlement = true;
 
-        let newColony = Colony.createNewRandomColony(x, y);
-        randomTile.colony = newColony;
-        this.colonies.push(newColony);
+        randomTile.colony = Colony.createNewRandomColony(this, x, y);
 
         CanvasHelper.drawMapPart(this, x-5, y-5, 10);
 

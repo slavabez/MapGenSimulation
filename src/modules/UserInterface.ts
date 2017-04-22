@@ -80,18 +80,37 @@ export default class UserInterface {
         });
     }
 
+    static createCanvasDiv(parentDivSelector: string, newId: string = null){
+        let parent = $(parentDivSelector);
+        const width = parent.width();
+        const height = 500;
+
+        // Check if a div with such ID exists, delete and re-write if does
+        if (document.getElementById(newId)){
+            document.getElementById(newId).remove();
+        }
+        let newCanvas: any = document.createElement('CANVAS');
+        parent.append(newCanvas);
+        let id = (newId) ? newId : 'canvas-' + (Math.floor(Math.random() * 500)).toString();
+        newCanvas.id = id;
+        newCanvas.width = width;
+        newCanvas.height = height;
+
+        return id;
+    }
+
     addGenerateButtonListener() {
         let UI = this;
 
         $('.js-generate-map').on('click', (e) => {
-            $('.js-generate-map').addClass('is-loading');
+            UserInterface.startGenerateButtonLoading();
 
             // Gather input fields, pass to Generator
 
-            const canvasId = 'main_map';
+            const conteinerId = 'main-map-container';
+            let canvasId = UserInterface.createCanvasDiv('.' + conteinerId, 'main-canvas');
+
             // TODO: add fields to change canvas dimensions programmatically
-            let width = 750;
-            let height = 400;
 
             let seed = $('#map_seed').val();
             let scale = $('#map_scale').val();
@@ -114,12 +133,16 @@ export default class UserInterface {
         $('.js-generate-map').removeClass('is-loading');
     }
 
+    static startGenerateButtonLoading() {
+        $('.js-generate-map').addClass('is-loading');
+    }
+
     static handleMapZoom(map: CanvasMap) {
         // Handle zooming area
         const mapDiv: any = document.getElementById('zoom_map');
         let zoomContext = mapDiv.getContext('2d');
 
-        const canvas = document.getElementById('main_map');
+        const canvas = document.getElementById(map.canvasId);
 
         // Disable anti aliasing
         zoomContext.imageSmoothingEnabled = false;
@@ -164,15 +187,15 @@ export default class UserInterface {
             const tile = map.tiles[y][x];
 
             // Find map stuff
-            let type: any = tile.type.name;
-            let altitude: any = Math.floor(tile.altitude);
-            let passable: any = tile.type.passable;
-            let settlement: any = tile.hasSettlement;
+            let type: string = tile.type.name;
+            let altitude: number = Math.floor(tile.altitude);
+            let passable: boolean = tile.type.passable;
+            let settlement: boolean = tile.hasSettlement;
 
             $('.js-clicked-type').html(type);
-            $('.js-clicked-altitude').html(altitude);
+            $('.js-clicked-altitude').html(altitude.toString());
             $('.js-clicked-passable').html(passable.toString());
-            $('.js-clicked-hasSettlement').html(settlement.toString());
+            $('.js-clicked-settlement').html(settlement.toString());
 
         };
 

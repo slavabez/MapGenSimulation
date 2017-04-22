@@ -156,7 +156,7 @@ export default class TileType {
         });
 
         for (let a of arr){
-            if (altitude < a.maxAltitude){
+            if (altitude <= a.maxAltitude){
                 return new TileType(a);
             }
         }
