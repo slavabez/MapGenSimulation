@@ -27,7 +27,7 @@ export default class CanvasMap {
 
         // Get width and height programmatically from the canvas
         const canvasDiv: any = document.getElementById(canvasId);
-        console.log(canvasId);
+
         this.width = canvasDiv.width;
         this.height = canvasDiv.height;
         this.colonies = [];
@@ -48,7 +48,6 @@ export default class CanvasMap {
 
     renderOnCanvas() {
         CanvasHelper.drawMap(this);
-        console.log(this);
     }
 
     generatePerlinBased(seed: number, scale: number, octaves: number, persistence: number, lacunarity: number, useFalloffMap: boolean = true) {
@@ -103,8 +102,6 @@ export default class CanvasMap {
 
         Logger.logGood(`Settlement placed on X: ${x}, Y: ${y}`);
 
-        console.log(randomTile,this.colonies);
-
     }
 
     addLargeRandomSettlement(size = 9){
@@ -140,10 +137,17 @@ export default class CanvasMap {
 
     getRandomPassableTile(){
         let tile = this.getRandomTile();
-        while(!tile.type.passable){
+        while(!tile.type.passable && tile.hasSettlement){
             tile = this.getRandomTile();
         }
         return tile;
     }
 
+}
+
+export enum MapDirection {
+    NORTH = 0,
+    EAST = 1,
+    SOUTH = 2,
+    WEST = 3
 }

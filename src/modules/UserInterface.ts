@@ -5,9 +5,12 @@
 import * as $ from 'jquery';
 import CanvasMap from './CanvasMap';
 import Logger from "./Logger";
+import GameLoop, {GameState} from "./GameLoop";
 
 export default class UserInterface {
+
     currentMap: CanvasMap;
+    gameLoop: GameLoop;
 
 
     attachAllUIListeners() {
@@ -17,6 +20,35 @@ export default class UserInterface {
         this.addGenerateButtonListener();
         this.handlePopulateButtonClick();
         this.handleButtonRenderFull();
+    }
+
+    attachLoopListeners(){
+        this.gameLoop = new GameLoop(this.currentMap, 60);
+
+        let UI = this;
+
+        $('.js-start-game-loop').on('click', () => {
+            UI.gameLoop.start();
+            UI.setTickUpdates();
+        });
+
+        $('.js-pause-game-loop').on('click', () => {
+            UI.gameLoop.pause();
+        });
+
+        $('.js-increment-tick').on('click', () => {
+            UI.gameLoop.update();
+        });
+
+    }
+
+    setTickUpdates(){
+        let gameLoop = this.gameLoop;
+        setInterval(() => {
+            $('.js-ticks-passed').html(gameLoop.ticks.toString());
+            $('.js-game-ticks-passed').html(gameLoop.gameTicks.toString());
+            $('.js-loop-state').html(GameState[gameLoop.state]);
+        }, 1000);
     }
 
     static attachLogToggleButton() {
@@ -126,6 +158,7 @@ export default class UserInterface {
             // Save map to the object
             UI.currentMap = map;
 
+            UI.attachLoopListeners();
         });
     }
 
