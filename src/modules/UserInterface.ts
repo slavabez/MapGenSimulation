@@ -52,7 +52,8 @@ export default class UserInterface {
         });
 
         // UP
-        Mousetrap.bind('up', () => {
+        Mousetrap.bind('up', (e) => {
+            e.preventDefault();
             UI.setZoomedInCoordinates(UI.zoomedAt.x, UI.zoomedAt.y - 1);
         });
         Mousetrap.bind('shift+up', () => {
@@ -60,7 +61,8 @@ export default class UserInterface {
         });
 
         // DOWN
-        Mousetrap.bind('down', () => {
+        Mousetrap.bind('down', (e) => {
+            e.preventDefault();
             UI.setZoomedInCoordinates(UI.zoomedAt.x, UI.zoomedAt.y + 1);
         });
         Mousetrap.bind('shift+down', () => {
