@@ -86,7 +86,8 @@ export default class CanvasMap {
                     colony: null,
                     type: tileType,
                     altitude: altitude,
-                    units: []
+                    units: [],
+                    hasPath: false
                 };
                 // Confusingly, 1 is blocked, 0 is passable
                 let passableValue = (tileType.passable) ? 0 : 1;
@@ -165,7 +166,7 @@ export default class CanvasMap {
     }
 
     getPassableMatrix(): Array<Array<number>>{
-        if (this.passableMatrix[this.height][this.width]){
+        if (this.passableMatrix[this.height - 1][this.width - 1]){
             return this.passableMatrix;
         } else {
             this.generatePassableMatrix();

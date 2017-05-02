@@ -68,7 +68,7 @@ export default class UserInterface {
     }
 
     attachLoopListeners(){
-        this.gameLoop = new GameLoop(this.currentMap, 60);
+        this.gameLoop = new GameLoop(this.currentMap, 10);
 
         let UI = this;
 
@@ -315,9 +315,17 @@ export default class UserInterface {
 
         $('.js-add-random-unit').on('click', () => {
             if (UI.currentMap){
-                let unit = Unit.placeUnitRandomly(UI.currentMap);
-                let randomTile = UI.currentMap.getRandomPassableTile();
-                let path = unit.findPathTo(randomTile.xCor, randomTile.yCor);
+                let unit = Unit.placeNewUnitAt(UI.currentMap, 200, 200);
+                let randomTile = UI.currentMap.tiles[300][300];
+                unit.setTargetCoordinates(randomTile.xCor, randomTile.yCor);
+            } else {
+                console.log('No map has been generated');
+            }
+        });
+
+        $('.js-test-button').on('click', () => {
+            if (UI.currentMap){
+                let path = Unit.calculatePathFromTo(UI.currentMap, 295,151, 377,147);
                 console.log(path);
             } else {
                 console.log('No map has been generated');

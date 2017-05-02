@@ -42,16 +42,41 @@ export default class Unit {
 
     }
 
-    findPathTo(x: number, y: number){
-        const passableMatrix = this.map.passableMatrix;
-        let grid = new PF.Grid(passableMatrix);
+    setTargetCoordinates(x: number, y: number){
+
+
+        // Check if target is accessible
+        let accessible = this.testTileAccessibility(x, y);
+        if (accessible) {
+            console.log('accessible');
+            this.targetX = x;
+            this.targetY = y;
+            this.state = UnitState.MOVING_TO_TARGET;
+            this.currentPath = accessible;
+
+        } else {
+            this.state = UnitState.STOPPED;
+            console.log('not accessible');
+        }
+
+    }
+
+    static calculatePathFromTo(map: CanvasMap, fromX: number, fromY: number, toX: number, toY: number): Array<any>{
+        let matrix = map.getPassableMatrix();
+        let grid = new PF.Grid(matrix);
         let finder = new PF.AStarFinder();
 
-        console.log(grid);
-        console.log(this.map);
-        console.log(`Attempting to find path from X:${this.currentX} Y:${this.currentY} to X:${x} Y:${y} `);
-        this.currentPath = finder.findPath(this.currentX, this.currentY, x, y, grid);
-        console.log(this.currentPath);
+        return finder.findPath(fromX, fromY, toX, toY, grid);
+    }
+
+    testTileAccessibility(x: number, y: number): Array<Array<number>> | boolean {
+        // Try to find path, if can't - not accessible, if can - return path
+        let path = Unit.calculatePathFromTo(this.map, this.currentX, this.currentY, x, y);
+        if (path.length > 1){
+            return path;
+        } else {
+            return false;
+        }
 
     }
 
@@ -61,6 +86,86 @@ export default class Unit {
         return new Unit(map, randomTile.xCor, randomTile.yCor);
     }
 
+    static placeNewUnitAt(map: CanvasMap, x: number, y: number){
+        let tile = map.tiles[y][x];
+        if (tile.type.passable){
+            return new Unit(map, x, y);
+        } else {
+            throw new Error('Tried placing a unit on an impassable tile');
+        }
+    }
+
+
+    takeAction() {
+        // TODO: add method here
+
+        // If stopped, but has a path, follow the path
+        if (this.state == UnitState.STOPPED && this.currentPath.length > 0){
+            /*for (let i = 0; i < this.currentPath.length; i++){
+                let pathItem = this.currentPath[i];
+                this.map.tiles[pathItem[1]][pathItem[0]].hasPath = true;
+            }
+            this.state = UnitState.MOVING_TO_TARGET;*/
+        }
+
+        if (this.state == UnitState.MOVING_TO_TARGET && this.currentPath){
+            // Update path using pathfinder, move to next block
+            let nextX = this.currentPath[1][0];
+            let nextY = this.currentPath[1][1];
+
+
+            this.move(nextX, nextY);
+            this.markTilesAsPathed();
+            this.checkIfReachedTarget();
+            this.recalculatePathToTarget();
+
+
+        }
+
+
+
+    }
+
+    move(x: number,y: number){
+        let oldX = this.currentX;
+        let oldY = this.currentY;
+
+        this.currentX = x;
+        this.currentY = y;
+
+        console.log(`Moved from X: ${oldX} Y: ${oldY} to X: ${x}, Y:${y}`);
+
+        // mark the old passed tile as non-pathed
+        let oldTile = this.map.tiles[oldY][oldX];
+        oldTile.hasPath = false;
+        oldTile.units = [];
+
+        let newTile = this.map.tiles[x][y];
+        newTile.units = [this];
+        newTile.hasPath = false;
+    }
+
+    recalculatePathToTarget(){
+        this.currentPath = this.testTileAccessibility(this.targetX, this.targetY);
+    }
+
+    checkIfReachedTarget(){
+        if (this.currentX == this.targetX && this.currentY == this.targetY){
+            // Reached
+            this.state = UnitState.STOPPED;
+            console.log('reached target');
+        } else {
+            this.state = UnitState.MOVING_TO_TARGET;
+        }
+    }
+
+    markTilesAsPathed(){
+        for (let i = 0; i < this.currentPath.length; i++){
+            let pathItem = this.currentPath[i];
+            this.map.tiles[pathItem[1]][pathItem[0]].hasPath = true;
+        }
+        this.state = UnitState.MOVING_TO_TARGET;
+    }
 
 }
 

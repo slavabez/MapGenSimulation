@@ -39,9 +39,16 @@ export default class GameLoop {
         if (this.state == GameState.RUNNING){
             // Each colony should spread
             if (this.map && this.map.colonies){
-                this.map.colonies.forEach((colony) => {
-                    colony.takeAction();
-                });
+                if (this.map.colonies) {
+                    this.map.colonies.forEach((colony) => {
+                        colony.takeAction();
+                    });
+                }
+                if (this.map.units.length > 0){
+                    this.map.units.forEach((unit) => {
+                        unit.takeAction();
+                    })
+                }
             } else {
                 console.log('No map to update', this);
             }

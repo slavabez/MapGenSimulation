@@ -15,6 +15,7 @@ export default class Tile {
     hasSettlement: boolean;
     colony: Colony | null;
     units: Array<Unit>;
+    hasPath: boolean;
 
 
     constructor(c: TileConstructorObject) {
@@ -25,6 +26,7 @@ export default class Tile {
         this.hasSettlement = c.hasSettlement;
         this.colony = c.colony;
         this.units = c.units;
+        this.hasPath = c.hasPath;
     }
 
     static createEmptyTile(x: number, y: number){
@@ -37,7 +39,8 @@ export default class Tile {
             altitude: -5000,
             hasSettlement: false,
             colony: null,
-            units: []
+            units: [],
+            hasPath: false
         });
     }
 
@@ -52,4 +55,5 @@ export interface TileConstructorObject {
     hasSettlement: boolean;
     colony: Colony;
     units: Array<Unit>;
+    hasPath: boolean;
 }

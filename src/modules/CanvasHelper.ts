@@ -30,7 +30,16 @@ export default class CanvasHelper {
                 const tile = map.tiles[h][w];
                 // If hasSettlement - get that hasSettlement colour
                 let rgb;
-                if (tile.hasSettlement) {
+                if (tile.hasPath){
+                    rgb = {
+                        name: 'path',
+                        hex: '#ff0000',
+                        rgb: '255,0,0',
+                        r: 255,
+                        g: 0,
+                        b: 0,
+                    };
+                } else if (tile.hasSettlement) {
                     rgb = tile.colony.colour;
                 } else if (tile.units.length > 0) {
                     rgb = {
