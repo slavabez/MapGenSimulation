@@ -203,6 +203,9 @@ export default class UserInterface {
             UI.handleMapZoom();
             UI.attachLoopListeners();
             UI.attachKeyboardShortcuts();
+            $('.js-output-map').on('click', () => {
+                console.log(UI.currentMap);
+            });
         });
     }
 

@@ -10,9 +10,6 @@ import Logger from './modules/Logger';
 import UI from './modules/UserInterface';
 
 
-Logger.logGood('ha');
-Logger.logError('Sample error');
-
 // Start all UI related listeners
 
 let ui = new UI();

@@ -31,6 +31,13 @@ export default class Colony {
         // Start simple, expand in a random direction if it's a passable tile
 
         this.spread();
+        /*
+        Actions colonies will do:
+            1) expand
+            2)
+
+
+         */
 
 
 
