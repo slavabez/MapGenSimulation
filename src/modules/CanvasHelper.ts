@@ -4,6 +4,8 @@
 
 import UI from './UserInterface';
 import CanvasMap from "./CanvasMap";
+import Tile from "./Tile";
+import * as PF from 'pathfinding';
 
 export default class CanvasHelper {
 
@@ -124,6 +126,24 @@ export default class CanvasHelper {
         const context = CanvasHelper.getCanvasContext(map.canvasId);
         const partialMapImageData = CanvasHelper.convertPartMapToUint8(map, startX, startY, size);
         context.putImageData(partialMapImageData, startX, startY);
+    }
+
+    static testTilesAreReachable(map: CanvasMap, tile1: Tile, tile2: Tile): boolean {
+        let tile1X = tile1.xCor;
+        let tile1Y = tile1.yCor;
+
+        let tile2X = tile2.xCor;
+        let tile2Y = tile2.yCor;
+
+        let matrix = map.getPassableMatrix();
+        let grid = new PF.Grid(matrix);
+
+        let finder = new PF.AStarFinder({allowDiagonal: true});
+
+        let path = finder.findPath(tile1X, tile1Y, tile2X, tile2Y, grid);
+
+        // If the path is not an empty array, it exists
+        return path.length > 0;
     }
 
 }

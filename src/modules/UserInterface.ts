@@ -9,6 +9,7 @@ import GameLoop, {GameState} from "./GameLoop";
 import * as Mousetrap from 'mousetrap';
 import MathsHelper from "./MathsHelper";
 import Unit from "./Unit";
+import CanvasHelper from "./CanvasHelper";
 
 export default class UserInterface {
 
@@ -68,7 +69,7 @@ export default class UserInterface {
     }
 
     attachLoopListeners(){
-        this.gameLoop = new GameLoop(this.currentMap, 10);
+        this.gameLoop = new GameLoop(this.currentMap, 60);
 
         let UI = this;
 
@@ -315,9 +316,23 @@ export default class UserInterface {
 
         $('.js-add-random-unit').on('click', () => {
             if (UI.currentMap){
-                let unit = Unit.placeNewUnitAt(UI.currentMap, 200, 200);
-                let randomTile = UI.currentMap.tiles[300][300];
-                unit.setTargetCoordinates(randomTile.xCor, randomTile.yCor);
+
+                let isPathable = false;
+                let randomTile1 = UI.currentMap.getRandomPassableTile();
+                let randomTile2 = UI.currentMap.getRandomPassableTile();
+                while (!isPathable){
+                    if (randomTile1 != randomTile2){
+                        if (CanvasHelper.testTilesAreReachable(UI.currentMap, randomTile1, randomTile2)){
+                            isPathable = true;
+                        } else {
+                            randomTile1 = UI.currentMap.getRandomPassableTile();
+                            randomTile2 = UI.currentMap.getRandomPassableTile();
+                        }
+                    }
+                }
+
+                let unit = Unit.placeNewUnitAt(UI.currentMap, randomTile1.xCor, randomTile1.yCor);
+                unit.setTargetCoordinates(randomTile2.xCor, randomTile2.yCor);
             } else {
                 console.log('No map has been generated');
             }
