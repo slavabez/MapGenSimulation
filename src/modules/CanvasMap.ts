@@ -10,14 +10,17 @@ import MathsHelper from "./MathsHelper";
 import Logger from "./Logger";
 import Colony from "./Colony";
 import TileType from "./TileType";
+import Unit from "./Unit";
 
 
 export default class CanvasMap {
     colonies: Array<Colony>;
+    units: Array<Unit>;
     width: number;
     height: number;
     canvasId: string;
     tiles: Array<Array<Tile>>;
+    passableMatrix: Array<Array<number>>;
 
     /**
      * Creates a new map with given dimensions and fills it with ocean cells
@@ -31,11 +34,13 @@ export default class CanvasMap {
         this.width = canvasDiv.width;
         this.height = canvasDiv.height;
         this.colonies = [];
+        this.units = [];
 
         this.canvasId = canvasId;
 
         // Create ocean cells
         this.tiles = [];
+        this.passableMatrix = [];
 
         for (let h = 0; h < this.height; h++) {
             this.tiles[h] = [];
@@ -60,6 +65,7 @@ export default class CanvasMap {
 
         for (let h = 0; h < this.height; h++) {
             this.tiles[h] = [];
+            this.passableMatrix[h] = [];
             for (let w = 0; w < this.width; w++) {
 
                 let value: number;
@@ -79,10 +85,14 @@ export default class CanvasMap {
                     hasSettlement: false,
                     colony: null,
                     type: tileType,
-                    altitude: altitude
+                    altitude: altitude,
+                    units: []
                 };
+                // Confusingly, 1 is blocked, 0 is passable
+                let passableValue = (tileType.passable) ? 0 : 1;
 
                 this.tiles[h][w] = new Tile(cObj);
+                this.passableMatrix[h][w] = passableValue;
             }
         }
 
@@ -143,6 +153,26 @@ export default class CanvasMap {
         }
         return tile;
     }
+
+    generatePassableMatrix(): void{
+        for (let h = 0; h < this.height; h++) {
+            this.passableMatrix[h] = [];
+            for (let w = 0; w < this.width; w++) {
+                const tileType = this.tiles[h][w].type;
+                this.passableMatrix[h][w] = (tileType.passable) ? 1 : 0;
+            }
+        }
+    }
+
+    getPassableMatrix(): Array<Array<number>>{
+        if (this.passableMatrix[this.height][this.width]){
+            return this.passableMatrix;
+        } else {
+            this.generatePassableMatrix();
+            return this.passableMatrix;
+        }
+    }
+
 
 }
 

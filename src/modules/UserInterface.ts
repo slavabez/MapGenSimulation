@@ -8,6 +8,7 @@ import Logger from "./Logger";
 import GameLoop, {GameState} from "./GameLoop";
 import * as Mousetrap from 'mousetrap';
 import MathsHelper from "./MathsHelper";
+import Unit from "./Unit";
 
 export default class UserInterface {
 
@@ -26,7 +27,7 @@ export default class UserInterface {
         UserInterface.attachTabListeners();
         UserInterface.attachSliderListeners();
         this.addGenerateButtonListener();
-        this.handlePopulateButtonClick();
+        this.handlePopulateButtonClicks();
         this.handleButtonRenderFull();
     }
 
@@ -135,22 +136,22 @@ export default class UserInterface {
 
     static attachSliderListeners() {
         // Scale slider
-        $('#map_scale').on('input', (e) => {
+        $('#map_scale').on('input', (e: Event) => {
             let target: any = e.target;
             $('.js-current-scale').html(target.value);
         });
         // Octaves
-        $('#map_octaves').on('input', (e) => {
+        $('#map_octaves').on('input', (e: Event) => {
             let target: any = e.target;
             $('.js-current-octaves').html(target.value);
         });
         // Lacunarity
-        $('#map_lacunarity').on('input', (e) => {
+        $('#map_lacunarity').on('input', (e: Event) => {
             let target: any = e.target;
             $('.js-current-lacunarity').html(target.value);
         });
         // Persistance
-        $('#map_persistence').on('input', (e) => {
+        $('#map_persistence').on('input', (e: Event) => {
             let target: any = e.target;
             $('.js-current-persistence').html(target.value);
         });
@@ -178,7 +179,7 @@ export default class UserInterface {
     addGenerateButtonListener() {
         let UI = this;
 
-        $('.js-generate-map').on('click', (e) => {
+        $('.js-generate-map').on('click', (e: Event) => {
             UserInterface.startGenerateButtonLoading();
 
             // Gather input fields, pass to Generator
@@ -299,7 +300,7 @@ export default class UserInterface {
         }, 1000/60);
     }
 
-    handlePopulateButtonClick(){
+    handlePopulateButtonClicks(){
 
         // Bind the scope
         let UI = this;
@@ -311,6 +312,18 @@ export default class UserInterface {
                 console.log('No map has been generated');
             }
         });
+
+        $('.js-add-random-unit').on('click', () => {
+            if (UI.currentMap){
+                let unit = Unit.placeUnitRandomly(UI.currentMap);
+                let randomTile = UI.currentMap.getRandomPassableTile();
+                let path = unit.findPathTo(randomTile.xCor, randomTile.yCor);
+                console.log(path);
+            } else {
+                console.log('No map has been generated');
+            }
+        });
+
 
     }
 

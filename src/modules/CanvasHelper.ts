@@ -32,6 +32,15 @@ export default class CanvasHelper {
                 let rgb;
                 if (tile.hasSettlement) {
                     rgb = tile.colony.colour;
+                } else if (tile.units.length > 0) {
+                    rgb = {
+                        name: 'units',
+                        hex: '#ffffff',
+                        rgb: '255,255,255',
+                        r: 255,
+                        g: 255,
+                        b: 255,
+                    };
                 } else {
                     rgb = tile.type;
                 }

@@ -5,6 +5,7 @@
 import Colony from './Colony';
 import TileType from "./TileType";
 import {TileTypeEnum} from "./TileTypeEnum";
+import Unit from "./Unit";
 
 export default class Tile {
     xCor: number;
@@ -13,6 +14,7 @@ export default class Tile {
     altitude: number;
     hasSettlement: boolean;
     colony: Colony | null;
+    units: Array<Unit>;
 
 
     constructor(c: TileConstructorObject) {
@@ -22,6 +24,7 @@ export default class Tile {
         this.altitude = c.altitude;
         this.hasSettlement = c.hasSettlement;
         this.colony = c.colony;
+        this.units = c.units;
     }
 
     static createEmptyTile(x: number, y: number){
@@ -33,7 +36,8 @@ export default class Tile {
             type: type,
             altitude: -5000,
             hasSettlement: false,
-            colony: null
+            colony: null,
+            units: []
         });
     }
 
@@ -47,4 +51,5 @@ export interface TileConstructorObject {
     altitude: number;
     hasSettlement: boolean;
     colony: Colony;
+    units: Array<Unit>;
 }
